@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCHÜTZ VASITEX — Cadastro de Cliente</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700;800&display=swap');
+
+  :root {
+    --blue-dark:  #0B2C6E;
+    --blue-mid:   #1040A0;
+    --blue-light: #2060C8;
+    --blue-bg:    #EBF0FA;
+    --accent:     #F5A623;
+    --white:      #FFFFFF;
+    --gray-soft:  #F4F6FB;
+    --gray-text:  #4A5568;
+    --green:      #27AE60;
+    --red:        #E53E3E;
+    --border:     #CBD5E0;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Barlow', Arial, sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(145deg, #071e52 0%, #0B2C6E 45%, #0d3580 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: -80px; right: -80px;
+    width: 320px; height: 320px;
+    background: rgba(255,255,255,0.03);
+    transform: rotate(20deg);
+    border-radius: 24px;
+    pointer-events: none;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -60px; left: -60px;
+    width: 240px; height: 240px;
+    background: rgba(255,255,255,0.03);
+    transform: rotate(-15deg);
+    border-radius: 20px;
+    pointer-events: none;
+  }
+
+  .wrapper {
+    width: 100%;
+    max-width: 560px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+  }
+
+  /* ── LOGO ── */
+  .logo-box {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 18px 36px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+    display: flex;
+    align-items: center;
+  }
+  .logo-tagline {
+    color: var(--white);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0.75;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .progress-steps {
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .step-dot {
+    flex: 1;
+    height: 4px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.2);
+    transition: background .3s;
+  }
+  .step-dot.done   { background: var(--accent); }
+  .step-dot.active { background: var(--white); }
+  .progress-label {
+    color: rgba(255,255,255,0.65);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-align: right;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--white);
+    border-radius: 20px;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+    width: 100%;
+    overflow: hidden;
+  }
+  .card-stripe {
+    height: 5px;
+    background: linear-gradient(90deg, var(--blue-dark), var(--blue-light), var(--accent));
+  }
+  .card-body { padding: 40px 40px 32px; animation: fadeUp .3s ease; }
+
+  /* ── STEP HEADER ── */
+  .step-icon {
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    background: var(--blue-bg);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 18px;
+  }
+  .step-icon svg { width: 26px; height: 26px; color: var(--blue-dark); }
+
+  h2 { font-size: 22px; font-weight: 800; color: var(--blue-dark); margin-bottom: 10px; }
+  .step-desc { color: var(--gray-text); font-size: 15px; line-height: 1.6; margin-bottom: 28px; }
+
+  /* ── NOTICE ── */
+  .notice {
+    border-left: 4px solid var(--blue-mid);
+    background: var(--blue-bg);
+    border-radius: 0 10px 10px 0;
+    padding: 14px 18px;
+    margin-top: 24px;
+  }
+  .notice p { font-size: 13.5px; color: var(--gray-text); line-height: 1.6; }
+  .notice strong { color: var(--blue-dark); }
+  .notice-yellow { border-left-color: var(--accent); background: #FFFBF0; }
+
+  /* ── FORM FIELDS ── */
+  .field-group { display: flex; flex-direction: column; gap: 20px; }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .field label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--blue-dark);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+  .field input {
+    padding: 14px 16px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-size: 15px;
+    font-family: 'Barlow', Arial, sans-serif;
+    color: #2D3748;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .field input:focus {
+    border-color: var(--blue-mid);
+    box-shadow: 0 0 0 4px rgba(16,64,160,0.1);
+  }
+  .field input.valid   { border-color: var(--green); }
+  .field input.invalid { border-color: var(--red); }
+
+  .field-hint {
+    font-size: 12px;
+    font-weight: 600;
+    min-height: 16px;
+    transition: color .2s;
+  }
+  .field-hint.ok  { color: var(--green); }
+  .field-hint.err { color: var(--red); }
+
+  /* ── UPLOAD ── */
+  .upload-zone {
+    border: 2px dashed var(--blue-mid);
+    border-radius: 14px;
+    padding: 36px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: background .2s, border-color .2s;
+    position: relative;
+  }
+  .upload-zone:hover { background: var(--blue-bg); border-color: var(--blue-dark); }
+  .upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .upload-icon { width: 44px; height: 44px; color: var(--blue-mid); margin: 0 auto 12px; display: block; }
+  .upload-label { font-size: 15px; font-weight: 700; color: var(--blue-dark); display: block; margin-bottom: 4px; }
+  .upload-sub   { font-size: 12px; color: #A0AEC0; }
+  .file-ok {
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px; margin-top: 14px;
+    color: var(--green); font-size: 14px; font-weight: 600;
+  }
+  .file-ok svg { width: 18px; height: 18px; }
+  .file-remove {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    border: none;
+    background: #fee2e2;
+    color: var(--red);
+    cursor: pointer;
+    margin-left: 6px;
+    flex-shrink: 0;
+    transition: background .2s, transform .1s;
+    pointer-events: auto;
+  }
+  .file-remove:hover { background: #fca5a5; transform: scale(1.1); }
+  .file-remove svg { width: 13px; height: 13px; }
+
+  /* ── CHECKBOX LIST ── */
+  .check-list { display: flex; flex-direction: column; gap: 10px; }
+  .check-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 18px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .check-item:hover { border-color: var(--blue-mid); background: var(--blue-bg); }
+  .check-item.checked { border-color: var(--blue-dark); background: var(--blue-bg); }
+  .check-item input { display: none; }
+  .custom-check {
+    width: 22px; height: 22px; flex-shrink: 0;
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .2s;
+  }
+  .check-item.checked .custom-check { background: var(--blue-dark); border-color: var(--blue-dark); }
+  .custom-check svg { width: 13px; height: 13px; color: white; display: none; }
+  .check-item.checked .custom-check svg { display: block; }
+  .check-item span { font-size: 14px; color: var(--gray-text); font-weight: 600; }
+  .check-item.checked span { color: var(--blue-dark); }
+
+  /* ── YES/NO ── */
+  .yn-wrap { display: flex; gap: 12px; margin-top: 4px; }
+  .yn-btn {
+    flex: 1; padding: 16px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-size: 16px; font-weight: 700;
+    cursor: pointer;
+    background: var(--white); color: var(--gray-text);
+    transition: all .2s;
+  }
+  .yn-btn:hover { border-color: var(--blue-mid); background: var(--blue-bg); }
+  .yn-btn.selected { border-color: var(--blue-dark); background: var(--blue-bg); color: var(--blue-dark); }
+
+  /* ── SUCCESS ── */
+  .success-circle {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #d4edda, #a8d5b5);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 0 12px rgba(39,174,96,.1);
+  }
+  .success-circle svg { width: 38px; height: 38px; color: var(--green); }
+
+  .sales-card {
+    background: var(--blue-bg);
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .sales-avatar {
+    width: 46px; height: 46px; border-radius: 50%;
+    background: var(--blue-dark);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 18px; font-weight: 700; flex-shrink: 0;
+  }
+  .sales-info p { font-size: 12px; color: #718096; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+  .sales-info strong { font-size: 15px; color: var(--blue-dark); display: block; margin-top: 2px; }
+  .sales-info a { font-size: 13px; color: var(--blue-mid); }
+
+  /* ── NAV ── */
+  .nav-row {
+    display: flex; gap: 12px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+  .btn-prev {
+    flex: 0 0 auto;
+    padding: 14px 22px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-size: 14px; font-weight: 700;
+    cursor: pointer; background: var(--white); color: var(--gray-text);
+    display: flex; align-items: center; gap: 6px;
+    transition: all .2s;
+  }
+  .btn-prev:hover { border-color: var(--blue-mid); color: var(--blue-dark); }
+  .btn-next {
+    flex: 1; padding: 14px 22px;
+    border: none; border-radius: 12px;
+    font-size: 15px; font-weight: 700;
+    cursor: pointer;
+    background: linear-gradient(135deg, var(--blue-dark), var(--blue-light));
+    color: white;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: opacity .2s, transform .1s;
+    box-shadow: 0 4px 18px rgba(11,44,110,.35);
+  }
+  .btn-next:hover { opacity: .92; transform: translateY(-1px); }
+  .btn-next:active { transform: translateY(0); }
+  .btn-reset {
+    flex: 1; padding: 14px 22px;
+    border: none; border-radius: 12px;
+    font-size: 15px; font-weight: 700;
+    cursor: pointer;
+    background: linear-gradient(135deg, var(--blue-dark), var(--blue-light));
+    color: white;
+    transition: opacity .2s;
+    box-shadow: 0 4px 18px rgba(11,44,110,.35);
+  }
+  .btn-reset:hover { opacity: .9; }
+
+  .divider { height: 1px; background: var(--border); margin: 28px 0; }
+  .footer-text { color: rgba(255,255,255,0.4); font-size: 12px; text-align: center; margin-top: 8px; }
+  .hidden { display: none !important; }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- LOGO -->
+  <div class="logo-box">
+    <img src="https://raw.githubusercontent.com/hugomkschutz/schutzvasitex/2df9ec7dbf0da4b53a3257d217089a17da3ef396/logo%20SCH%C3%9CTZ%20VASITEX_azul.png"
+         alt="SCHÜTZ VASITEX" style="height:52px;display:block;">
+  </div>
+
+  <span class="logo-tagline">Embalagens Industriais • Brasil</span>
+
+  <!-- PROGRESS BAR -->
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-steps">
+      <div class="step-dot active" id="dot1"></div>
+      <div class="step-dot" id="dot2"></div>
+      <div class="step-dot" id="dot3"></div>
+      <div class="step-dot" id="dot4"></div>
+      <div class="step-dot" id="dot5"></div>
+      <div class="step-dot" id="dot6"></div>
+    </div>
+    <div class="progress-label" id="progressLabel">Etapa 1 de 6</div>
+  </div>
+
+  <!-- CARD -->
+  <div class="card">
+    <div class="card-stripe"></div>
+    <div class="card-body" id="cardBody">
+
+      <!-- ════ STEP 1 — Boas-vindas ════ -->
+      <div id="step1">
+        <div style="margin:-40px -40px 28px -40px;border-radius:14px 14px 0 0;overflow:hidden;background:#0B2C6E;height:160px;position:relative;">
+          <img src="https://raw.githubusercontent.com/hugomkschutz/schutzvasitex/dfbfe0f59ca6f53a4be98814632e991390cabc26/Cubos.png"
+               alt="SCHÜTZ VASITEX"
+               style="width:100%;height:100%;object-fit:cover;object-position:center;opacity:0.92;">
+        </div>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a5 5 0 1 0 0 10A5 5 0 0 0 12 2zm0 12c-5.33 0-8 2.67-8 4v2h16v-2c0-1.33-2.67-4-8-4z"/></svg>
+        </div>
+        <h2>Bem-vindo!</h2>
+        <p class="step-desc">
+          A SCHÜTZ VASITEX agradece seu contato e interesse. Nas próximas etapas, solicitaremos algumas informações para direcionar seu atendimento ao executivo comercial responsável.
+        </p>
+        <div class="notice">
+          <p><strong>Observação:</strong> O faturamento mínimo é de <strong>R$ 5.000,00</strong>, com pagamento à vista nas primeiras compras.</p>
+        </div>
+      </div>
+
+      <!-- ════ STEP 2 — Dados do Lead ════ -->
+      <div id="step2" class="hidden">
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <h2>Seus Dados</h2>
+        <p class="step-desc">Preencha os campos abaixo para que possamos entrar em contato com você.</p>
+
+        <div class="field-group">
+          <div class="field">
+            <label for="inputName">Nome Completo</label>
+            <input type="text" id="inputName" placeholder="Ex: João da Silva"
+                   oninput="validateName()" onblur="validateName()">
+            <span class="field-hint" id="hintName"></span>
+          </div>
+          <div class="field">
+            <label for="inputEmail">E-mail</label>
+            <input type="email" id="inputEmail" placeholder="Ex: joao.silva@empresa.com.br"
+                   oninput="validateEmail()" onblur="validateEmail()"
+                   style="text-transform:lowercase;">
+            <span class="field-hint" id="hintEmail"></span>
+          </div>
+          <div class="field">
+            <label for="inputPhone">Telefone / WhatsApp</label>
+            <input type="tel" id="inputPhone" placeholder="EX: (11) 99999-9999"
+                   oninput="formatPhone(this); validatePhone()" onblur="validatePhone()" maxlength="15">
+            <span class="field-hint" id="hintPhone"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════ STEP 3 — CNPJ ════ -->
+      <div id="step3" class="hidden">
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 7h6M9 11h6M9 15h4"/></svg>
+        </div>
+        <h2>Cartão CNPJ</h2>
+        <p class="step-desc">Por favor, anexe um arquivo no formato <strong>PDF</strong> com o cartão CNPJ da sua empresa.</p>
+        <div class="upload-zone">
+          <input type="file" id="cnpjInput" accept=".pdf" onchange="handleUpload('cnpj', this)">
+          <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span class="upload-label">Clique para selecionar o arquivo PDF</span>
+          <span class="upload-sub">Somente arquivos .pdf são aceitos</span>
+        </div>
+        <div class="file-ok hidden" id="cnpjOk">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <span id="cnpjName"></span>
+          <button class="file-remove" onclick="removeFile('cnpj', event)" title="Remover arquivo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- ════ STEP 4 — Produtos ════ -->
+      <div id="step4" class="hidden">
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8l-9-4-9 4v8l9 4 9-4z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        </div>
+        <h2>Produtos e Serviços</h2>
+        <p class="step-desc">Em quais produtos ou serviços você está interessado? Selecione todos que se aplicam.</p>
+        <div class="check-list" id="productList"></div>
+      </div>
+
+      <!-- ════ STEP 5 — MSDS ════ -->
+      <div id="step5" class="hidden">
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+        </div>
+        <h2>MSDS / FISPQ</h2>
+        <p class="step-desc">Para análise de compatibilidade e indicação da embalagem mais adequada, favor anexar a <strong>MSDS (FISPQ)</strong> do produto a ser envasado. Caso ainda não tenha, marque a opção <strong>"Não tenho a MSDS (FISPQ)."</strong> e vá para a próxima etapa.</p>
+        <div class="upload-zone" id="msdsUploadZone">
+          <input type="file" id="msdsInput" accept=".pdf" onchange="handleUpload('msds', this)">
+          <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span class="upload-label">Clique para selecionar o arquivo PDF</span>
+          <span class="upload-sub">Somente arquivos .pdf são aceitos</span>
+        </div>
+        <div class="file-ok hidden" id="msdsOk">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <span id="msdsName"></span>
+          <button class="file-remove" onclick="removeFile('msds', event)" title="Remover arquivo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <label class="check-item" id="noMsdsItem" style="margin-top:14px;">
+          <input type="checkbox" id="chkNoMsds" onchange="toggleNoMsds(this.checked)">
+          <div class="custom-check" id="noMsdsCheck">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <span>Não tenho a MSDS (FISPQ).</span>
+        </label>
+      </div>
+
+      <!-- ════ STEP 6 — Fabricante ════ -->
+      <div id="step6" class="hidden">
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+        </div>
+        <h2>Informação Importante</h2>
+        <p class="step-desc">A sua empresa é <strong>fabricante</strong> do produto a ser envasado?</p>
+        <div class="yn-wrap">
+          <button class="yn-btn" id="btnYes" onclick="selectMfr(true)">✔ Sim</button>
+          <button class="yn-btn" id="btnNo"  onclick="selectMfr(false)">✘ Não</button>
+        </div>
+      </div>
+
+      <!-- ════ STEP 7 — Confirmação ════ -->
+      <div id="step7" class="hidden" style="text-align:center">
+        <div style="display:flex;align-items:flex-end;justify-content:center;gap:20px;margin-bottom:8px;">
+          <img src="https://raw.githubusercontent.com/hugomkschutz/schutzvasitex/dfbfe0f59ca6f53a4be98814632e991390cabc26/Mascote.png"
+               alt="Mascote SCHÜTZ VASITEX"
+               style="height:130px;object-fit:contain;filter:drop-shadow(0 6px 16px rgba(11,44,110,0.18));">
+          <div>
+            <div class="success-circle" style="margin:0 0 12px 0;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <h2 style="text-align:center">Dados Recebidos!</h2>
+          </div>
+        </div>
+        <p class="step-desc" style="text-align:center">
+          Obrigado pelas informações. Encaminhamos um e-mail para você e para nosso time comercial para dar sequência ao seu atendimento.
+        </p>
+
+        <div class="sales-card" id="salesCard">
+          <div class="sales-avatar" id="salesAvatar">?</div>
+          <div class="sales-info">
+            <p>Seu executivo responsável</p>
+            <strong id="salesName">—</strong>
+            <a id="salesEmail" href="#">—</a>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="notice notice-yellow">
+          <p><strong>Próximas etapas:</strong> Você receberá um e-mail com as instruções para os próximos passos. Fique atento à sua caixa de entrada.</p>
+        </div>
+      </div>
+
+      <!-- ════ NAV ════ -->
+      <div class="nav-row">
+        <button class="btn-prev hidden" id="btnPrev" onclick="prevStep()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+          Anterior
+        </button>
+        <button class="btn-next" id="btnNext" onclick="nextStep()">
+          Próximo
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+        <button class="btn-reset hidden" id="btnReset" onclick="resetForm()">
+          Novo Formulário
+        </button>
+      </div>
+
+    </div><!-- /card-body -->
+  </div><!-- /card -->
+
+  <p class="footer-text">© SCHÜTZ VASITEX Indústria de Embalagens S.A. — Todos os direitos reservados</p>
+</div>
+
+<script>
+const TOTAL_STEPS = 6;
+
+// Cole aqui a URL gerada após publicar o Apps Script como Web App
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby1IvAKMMWaW7zGvJYWDkvf2UEd2xi_ICjMyEWFuXlw1zdU2Syu31IDWn-xcmuipGOwgg/exec';
+
+const PRODUCTS = [
+  'IBC (1.000L)',
+  'Tambor Plástico Tampa Fixa (200L / 220L / 250L)',
+  'Bombonas (20L / 25L / 50L)',
+  'PEAD reciclado',
+  'Logística Reversa de IBCs usados'
+];
+
+// STATE
+let currentStep   = 1;
+let cnpjFile      = null;
+let msdsFile      = null;
+let noMsds        = false;
+let selectedProds = [];
+let isMfr         = null;
+let assignedSales = null;
+
+// BUILD PRODUCT CHECKBOXES
+(function init() {
+  const list = document.getElementById('productList');
+  PRODUCTS.forEach((p, i) => {
+    const label = document.createElement('label');
+    label.className = 'check-item';
+    label.innerHTML = `
+      <input type="checkbox" id="chk${i}">
+      <div class="custom-check">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <span>${p}</span>`;
+    label.querySelector('input').addEventListener('change', function() {
+      if (this.checked) {
+        if (!selectedProds.includes(p)) selectedProds.push(p);
+        label.classList.add('checked');
+      } else {
+        selectedProds = selectedProds.filter(x => x !== p);
+        label.classList.remove('checked');
+      }
+    });
+    list.appendChild(label);
+  });
+})();
+
+// VALIDATION
+function isValidEmail(v) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim());
+}
+
+function validateName() {
+  const inp = document.getElementById('inputName');
+  const hint = document.getElementById('hintName');
+  const v = inp.value.trim();
+  if (!v) {
+    inp.className = ''; hint.textContent = ''; hint.className = 'field-hint'; return false;
+  }
+  const parts = v.split(' ').filter(Boolean);
+  if (parts.length < 2) {
+    inp.className = 'invalid';
+    hint.textContent = 'Por favor, informe o nome completo.';
+    hint.className = 'field-hint err'; return false;
+  }
+  inp.className = 'valid';
+  hint.textContent = '✔ Nome válido';
+  hint.className = 'field-hint ok'; return true;
+}
+
+function formatPhone(input) {
+  let v = input.value.replace(/\D/g, '');
+  if (v.length > 11) v = v.slice(0, 11);
+  if (v.length > 6) {
+    v = '(' + v.slice(0,2) + ') ' + v.slice(2,7) + '-' + v.slice(7);
+  } else if (v.length > 2) {
+    v = '(' + v.slice(0,2) + ') ' + v.slice(2);
+  } else if (v.length > 0) {
+    v = '(' + v;
+  }
+  input.value = v;
+}
+
+function validatePhone() {
+  const inp = document.getElementById('inputPhone');
+  const hint = document.getElementById('hintPhone');
+  const digits = inp.value.replace(/\D/g, '');
+  if (!digits) {
+    inp.className = ''; hint.textContent = ''; hint.className = 'field-hint'; return false;
+  }
+  if (digits.length < 10) {
+    inp.className = 'invalid';
+    hint.textContent = 'Número inválido. Informe DDD + número.';
+    hint.className = 'field-hint err'; return false;
+  }
+  inp.className = 'valid';
+  hint.textContent = '✔ Número válido';
+  hint.className = 'field-hint ok'; return true;
+}
+
+function validateEmail() {
+  const inp = document.getElementById('inputEmail');
+  const hint = document.getElementById('hintEmail');
+  const v = inp.value.trim();
+  if (!v) {
+    inp.className = ''; hint.textContent = ''; hint.className = 'field-hint'; return false;
+  }
+  if (!isValidEmail(v)) {
+    inp.className = 'invalid';
+    hint.textContent = 'Formato inválido. Ex: nome@empresa.com.br';
+    hint.className = 'field-hint err'; return false;
+  }
+  inp.className = 'valid';
+  hint.textContent = '✔ E-mail válido';
+  hint.className = 'field-hint ok'; return true;
+}
+
+// NAVIGATION
+function showStep(n) {
+  for (let i = 1; i <= 7; i++) {
+    document.getElementById('step' + i).classList.toggle('hidden', i !== n);
+  }
+
+  // animate
+  const cb = document.getElementById('cardBody');
+  cb.style.animation = 'none'; cb.offsetHeight;
+  cb.style.animation = 'fadeUp .3s ease';
+
+  const isConfirm = n === 7;
+  document.getElementById('btnPrev').classList.toggle('hidden', n <= 1 || isConfirm);
+  document.getElementById('btnNext').classList.toggle('hidden', isConfirm);
+  document.getElementById('btnReset').classList.toggle('hidden', !isConfirm);
+  document.getElementById('progressWrap').classList.toggle('hidden', isConfirm);
+
+  if (!isConfirm) {
+    const btn = document.getElementById('btnNext');
+    btn.innerHTML = n === TOTAL_STEPS
+      ? 'Finalizar <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>'
+      : 'Próximo <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>';
+  }
+
+  // dots (1–6)
+  for (let i = 1; i <= TOTAL_STEPS; i++) {
+    const d = document.getElementById('dot' + i);
+    d.className = 'step-dot';
+    if (i < n)  d.classList.add('done');
+    if (i === n) d.classList.add('active');
+  }
+  document.getElementById('progressLabel').textContent = `Etapa ${Math.min(n, TOTAL_STEPS)} de ${TOTAL_STEPS}`;
+}
+
+function nextStep() {
+  if (currentStep === 2) {
+    const nameOk  = validateName();
+    const emailOk = validateEmail();
+    const phoneOk = validatePhone();
+    if (!nameOk || !emailOk || !phoneOk) { shake(); return; }
+  }
+  if (currentStep === 3 && !cnpjFile) {
+    shake(); alert('Por favor, anexe o cartão CNPJ em PDF.'); return;
+  }
+  if (currentStep === 4 && selectedProds.length === 0) {
+    shake(); alert('Por favor, selecione pelo menos um produto ou serviço.'); return;
+  }
+  if (currentStep === 5 && !msdsFile && !noMsds) {
+    shake(); alert('Por favor, anexe a MSDS (FISPQ) em PDF ou marque "Não tenho a MSDS (FISPQ)".'); return;
+  }
+  if (currentStep === 6 && isMfr === null) {
+    shake(); alert('Por favor, responda se sua empresa é fabricante.'); return;
+  }
+  if (currentStep === 6) {
+    const btn = document.getElementById('btnNext');
+    btn.disabled = true;
+    btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin 1s linear infinite"><path d="M12 2a10 10 0 1 0 10 10" stroke-linecap="round"/></svg> Aguarde...';
+
+    // 1) Converte PDFs para base64, depois submete tudo
+    Promise.all([
+      fileToBase64(cnpjFile),
+      msdsFile ? fileToBase64(msdsFile) : Promise.resolve(null)
+    ])
+    .then(([cnpjB64, msdsB64]) => {
+      const payload = {
+        action:      'submitLead',
+        name:        document.getElementById('inputName').value.trim(),
+        email:       document.getElementById('inputEmail').value.trim(),
+        phone:       document.getElementById('inputPhone').value.trim(),
+        products:    selectedProds,
+        isMfr:       isMfr,
+        hasMsds:     !noMsds,
+        cnpjName:    cnpjFile ? cnpjFile.name : '',
+        cnpjBase64:  cnpjB64,
+        msdsName:    msdsFile ? msdsFile.name : '',
+        msdsBase64:  msdsB64
+      };
+      // Sem Content-Type header para evitar preflight CORS no Apps Script
+      return fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        body:   JSON.stringify(payload)
+      });
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.error) throw new Error(data.error);
+      assignedSales = data;
+      const initials = data.name.split(' ').slice(0,2).map(w => w[0]).join('');
+      document.getElementById('salesAvatar').textContent = initials;
+      document.getElementById('salesName').textContent   = data.name;
+      const em = document.getElementById('salesEmail');
+      em.textContent = data.email;
+      em.href = 'mailto:' + data.email;
+      currentStep = 7;
+      showStep(currentStep);
+    })
+    .catch(err => {
+      alert('Erro ao enviar formulário: ' + err.message);
+    })
+    .finally(() => {
+      btn.disabled = false;
+      btn.innerHTML = 'Finalizar <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>';
+    });
+    return;
+  } else {
+    currentStep++;
+  }
+  showStep(currentStep);
+}
+
+function prevStep() {
+  if (currentStep > 1) { currentStep--; showStep(currentStep); }
+}
+
+function resetForm() {
+  currentStep = 1; cnpjFile = null; msdsFile = null; noMsds = false;
+  selectedProds = []; isMfr = null; assignedSales = null;
+  const noMsdsItem = document.getElementById('noMsdsItem');
+  if (noMsdsItem) noMsdsItem.classList.remove('checked');
+  document.getElementById('chkNoMsds').checked = false;
+  const noMsdsCheck = document.getElementById('noMsdsCheck');
+  if (noMsdsCheck) { noMsdsCheck.style.background=''; noMsdsCheck.style.borderColor=''; noMsdsCheck.querySelector('svg').style.display='none'; }
+  const zone = document.getElementById('msdsUploadZone');
+  if (zone) { zone.style.opacity='1'; zone.style.pointerEvents='auto'; }
+
+  document.getElementById('inputName').value = '';
+  document.getElementById('inputEmail').value = '';
+  document.getElementById('inputPhone').value = '';
+  ['inputName','inputEmail','inputPhone'].forEach(id => { document.getElementById(id).className = ''; });
+  ['hintName','hintEmail','hintPhone'].forEach(id => { document.getElementById(id).textContent = ''; });
+
+  document.getElementById('cnpjOk').classList.add('hidden');
+  document.getElementById('msdsOk').classList.add('hidden');
+
+  document.querySelectorAll('.check-item').forEach(el => {
+    el.classList.remove('checked');
+    el.querySelector('input').checked = false;
+  });
+
+  document.getElementById('btnYes').classList.remove('selected');
+  document.getElementById('btnNo').classList.remove('selected');
+
+  showStep(1);
+}
+
+// HELPERS
+function toggleNoMsds(checked) {
+  noMsds = checked;
+  const item  = document.getElementById('noMsdsItem');
+  const check = document.getElementById('noMsdsCheck');
+  const zone  = document.getElementById('msdsUploadZone');
+  if (noMsds) {
+    item.classList.add('checked');
+    check.style.background = 'var(--blue-dark)';
+    check.style.borderColor = 'var(--blue-dark)';
+    check.querySelector('svg').style.display = 'block';
+    zone.style.opacity = '0.4';
+    zone.style.pointerEvents = 'none';
+    msdsFile = null;
+    document.getElementById('msdsOk').classList.add('hidden');
+  } else {
+    item.classList.remove('checked');
+    check.style.background = '';
+    check.style.borderColor = '';
+    check.querySelector('svg').style.display = 'none';
+    zone.style.opacity = '1';
+    zone.style.pointerEvents = 'auto';
+  }
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload  = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = () => reject(new Error('Erro ao ler arquivo.'));
+    reader.readAsDataURL(file);
+  });
+}
+
+function removeFile(type, event) {
+  event.stopPropagation(); // prevent triggering upload-zone click
+  if (type === 'cnpj') {
+    cnpjFile = null;
+    document.getElementById('cnpjName').textContent = '';
+    document.getElementById('cnpjOk').classList.add('hidden');
+    document.getElementById('cnpjInput').value = '';
+  } else {
+    msdsFile = null;
+    document.getElementById('msdsName').textContent = '';
+    document.getElementById('msdsOk').classList.add('hidden');
+    document.getElementById('msdsInput').value = '';
+  }
+}
+
+function shake() {
+  const card = document.querySelector('.card');
+  card.style.transform = 'translateX(-6px)';
+  setTimeout(() => card.style.transform = 'translateX(6px)', 80);
+  setTimeout(() => card.style.transform = 'translateX(0)', 160);
+}
+
+function handleUpload(type, input) {
+  const file = input.files[0];
+  if (!file || file.type !== 'application/pdf') {
+    alert('Por favor, selecione um arquivo PDF.'); return;
+  }
+  if (type === 'cnpj') {
+    cnpjFile = file;
+    document.getElementById('cnpjName').textContent = file.name;
+    document.getElementById('cnpjOk').classList.remove('hidden');
+  } else {
+    msdsFile = file;
+    document.getElementById('msdsName').textContent = file.name;
+    document.getElementById('msdsOk').classList.remove('hidden');
+  }
+}
+
+function selectMfr(val) {
+  isMfr = val;
+  document.getElementById('btnYes').classList.toggle('selected', val === true);
+  document.getElementById('btnNo').classList.toggle('selected',  val === false);
+}
+
+function getNextSales() {
+  const lastIdx = parseInt(localStorage.getItem('lastSalesIdx') ?? '-1');
+  const candidates = SALES_TEAM.map((_, i) => i).filter(i => i !== lastIdx);
+  const pick = candidates[Math.floor(Math.random() * candidates.length)];
+  localStorage.setItem('lastSalesIdx', pick);
+  return SALES_TEAM[pick];
+}
+
+showStep(1);
+</script>
+</body>
+</html>
