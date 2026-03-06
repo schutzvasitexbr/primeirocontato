@@ -589,7 +589,7 @@ let isMfr         = null;
 let assignedSales = null;
 
 // BUILD PRODUCT CHECKBOXES
-(function init() {
+function buildProducts() {
   const list = document.getElementById('productList');
   PRODUCTS.forEach((p, i) => {
     const label = document.createElement('label');
@@ -611,7 +611,7 @@ let assignedSales = null;
     });
     list.appendChild(label);
   });
-})();
+}
 
 // VALIDATION
 function isValidEmail(v) {
@@ -798,8 +798,11 @@ function nextStep() {
       alert('Erro ao enviar formulário: ' + err.message);
     })
     .finally(() => {
-      btn.disabled = false;
-      btn.innerHTML = 'Finalizar <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>';
+      // Só reabilita o botão se ainda não avançou para a tela de confirmação
+      if (currentStep < 7) {
+        btn.disabled = false;
+        btn.innerHTML = 'Finalizar <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>';
+      }
     });
     return;
   } else {
@@ -931,11 +934,11 @@ function selectMfr(val) {
   document.getElementById('btnNo').classList.toggle('selected',  val === false);
 }
 
-showStep(1);
-</script>
-</body>
-</html>
-showStep(1);
+// Inicializa quando o DOM estiver pronto
+document.addEventListener('DOMContentLoaded', function() {
+  buildProducts();
+  showStep(1);
+});
 </script>
 </body>
 </html>
