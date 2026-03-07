@@ -816,32 +816,56 @@ function prevStep() {
 }
 
 function resetForm() {
+  // Reset estado
   currentStep = 1; cnpjFile = null; msdsFile = null; noMsds = false;
   selectedProds = []; isMfr = null; assignedSales = null;
+
+  // Reset MSDS checkbox
   const noMsdsItem = document.getElementById('noMsdsItem');
   if (noMsdsItem) noMsdsItem.classList.remove('checked');
-  document.getElementById('chkNoMsds').checked = false;
+  const chkNoMsds = document.getElementById('chkNoMsds');
+  if (chkNoMsds) chkNoMsds.checked = false;
   const noMsdsCheck = document.getElementById('noMsdsCheck');
-  if (noMsdsCheck) { noMsdsCheck.style.background=''; noMsdsCheck.style.borderColor=''; noMsdsCheck.querySelector('svg').style.display='none'; }
+  if (noMsdsCheck) {
+    noMsdsCheck.style.background = '';
+    noMsdsCheck.style.borderColor = '';
+    noMsdsCheck.querySelector('svg').style.display = 'none';
+  }
   const zone = document.getElementById('msdsUploadZone');
-  if (zone) { zone.style.opacity='1'; zone.style.pointerEvents='auto'; }
+  if (zone) { zone.style.opacity = '1'; zone.style.pointerEvents = 'auto'; }
 
-  document.getElementById('inputName').value = '';
+  // Reset campos de texto
+  document.getElementById('inputName').value  = '';
   document.getElementById('inputEmail').value = '';
   document.getElementById('inputPhone').value = '';
-  ['inputName','inputEmail','inputPhone'].forEach(id => { document.getElementById(id).className = ''; });
-  ['hintName','hintEmail','hintPhone'].forEach(id => { document.getElementById(id).textContent = ''; });
-
-  document.getElementById('cnpjOk').classList.add('hidden');
-  document.getElementById('msdsOk').classList.add('hidden');
-
-  document.querySelectorAll('.check-item').forEach(el => {
-    el.classList.remove('checked');
-    el.querySelector('input').checked = false;
+  ['inputName','inputEmail','inputPhone'].forEach(id => {
+    document.getElementById(id).className = '';
+  });
+  ['hintName','hintEmail','hintPhone'].forEach(id => {
+    document.getElementById(id).textContent = '';
   });
 
+  // Reset uploads de arquivo
+  document.getElementById('cnpjOk').classList.add('hidden');
+  document.getElementById('msdsOk').classList.add('hidden');
+  document.getElementById('cnpjInput').value = '';
+  document.getElementById('msdsInput').value = '';
+
+  // Reset checkboxes de produtos
+  document.querySelectorAll('.check-item').forEach(el => {
+    el.classList.remove('checked');
+    const inp = el.querySelector('input');
+    if (inp) inp.checked = false;
+  });
+
+  // Reset botões Sim/Não
   document.getElementById('btnYes').classList.remove('selected');
   document.getElementById('btnNo').classList.remove('selected');
+
+  // Restaura o botão Next para estado limpo antes de showStep
+  const btnNext = document.getElementById('btnNext');
+  btnNext.disabled = false;
+  btnNext.innerHTML = 'Próximo <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>';
 
   showStep(1);
 }
