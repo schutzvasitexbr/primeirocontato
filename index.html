@@ -708,6 +708,7 @@ function showStep(n) {
 
   if (!isConfirm) {
     const btn = document.getElementById('btnNext');
+    btn.disabled = false; // garante que o botão nunca fica preso como desabilitado
     btn.innerHTML = n === TOTAL_STEPS
       ? 'Finalizar <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>'
       : 'Próximo <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>';
@@ -724,6 +725,7 @@ function showStep(n) {
 }
 
 function nextStep() {
+  try {
   if (currentStep === 2) {
     const nameOk  = validateName();
     const emailOk = validateEmail();
@@ -809,6 +811,10 @@ function nextStep() {
     currentStep++;
   }
   showStep(currentStep);
+  } catch(e) {
+    console.error('nextStep error:', e);
+    alert('Erro inesperado: ' + e.message);
+  }
 }
 
 function prevStep() {
