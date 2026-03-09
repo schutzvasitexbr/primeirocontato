@@ -351,6 +351,195 @@
     from { opacity: 0; transform: translateY(12px); }
     to   { opacity: 1; transform: translateY(0); }
   }
+
+  /* ════════════════════════════════════════
+     RESPONSIVIDADE — Tablet e Smartphone
+  ════════════════════════════════════════ */
+
+  /* Tablet (até 600px) */
+  @media (max-width: 600px) {
+    body {
+      padding: 16px 12px;
+      align-items: flex-start;
+    }
+
+    .wrapper {
+      gap: 18px;
+    }
+
+    .logo-box {
+      padding: 14px 24px;
+    }
+
+    .logo-box img {
+      height: 42px;
+    }
+
+    .logo-tagline {
+      font-size: 11px;
+      letter-spacing: 1.5px;
+    }
+
+    .card-body {
+      padding: 28px 24px 24px;
+    }
+
+    h2 {
+      font-size: 20px;
+    }
+
+    .step-desc {
+      font-size: 14px;
+      margin-bottom: 22px;
+    }
+
+    .step-icon {
+      width: 46px; height: 46px;
+      border-radius: 12px;
+      margin-bottom: 14px;
+    }
+
+    /* Banner do step 1 */
+    #step1 > div:first-child {
+      height: 130px;
+      margin: -28px -24px 22px -24px;
+    }
+
+    /* Upload zone */
+    .upload-zone {
+      padding: 28px 16px;
+    }
+
+    /* Checkboxes — área de toque maior */
+    .check-item {
+      padding: 14px 14px;
+    }
+
+    /* Botões Sim/Não */
+    .yn-btn {
+      padding: 18px 10px;
+      font-size: 15px;
+    }
+
+    /* Nav */
+    .nav-row {
+      margin-top: 24px;
+      padding-top: 18px;
+    }
+
+    .btn-prev {
+      padding: 14px 16px;
+      font-size: 13px;
+    }
+
+    .btn-next,
+    .btn-reset {
+      padding: 14px 18px;
+      font-size: 14px;
+    }
+
+    /* Step 7 — tela de sucesso */
+    #step7 > div:first-child {
+      gap: 12px;
+    }
+
+    #step7 > div:first-child img {
+      height: 100px;
+    }
+
+    .success-circle {
+      width: 66px; height: 66px;
+    }
+
+    .success-circle svg {
+      width: 30px; height: 30px;
+    }
+
+    .sales-card {
+      padding: 14px 16px;
+    }
+
+    .divider {
+      margin: 20px 0;
+    }
+
+    .footer-text {
+      font-size: 11px;
+    }
+  }
+
+  /* Smartphone pequeno (até 380px) */
+  @media (max-width: 380px) {
+    body {
+      padding: 12px 8px;
+    }
+
+    .card-body {
+      padding: 22px 18px 20px;
+    }
+
+    h2 {
+      font-size: 18px;
+    }
+
+    .step-desc {
+      font-size: 13px;
+    }
+
+    /* Banner do step 1 */
+    #step1 > div:first-child {
+      height: 110px;
+      margin: -22px -18px 18px -18px;
+    }
+
+    .yn-wrap {
+      gap: 8px;
+    }
+
+    .yn-btn {
+      padding: 16px 8px;
+      font-size: 14px;
+    }
+
+    .field input {
+      font-size: 14px;
+      padding: 13px 14px;
+    }
+
+    .upload-label {
+      font-size: 14px;
+    }
+
+    .notice p {
+      font-size: 13px;
+    }
+
+    .check-item span {
+      font-size: 13px;
+    }
+
+    #step7 > div:first-child img {
+      height: 80px;
+    }
+
+    .success-circle {
+      width: 56px; height: 56px;
+    }
+  }
+
+  /* Garante área de toque mínima de 44px para todos os botões interativos */
+  @media (hover: none) and (pointer: coarse) {
+    .btn-next, .btn-prev, .btn-reset, .yn-btn {
+      min-height: 48px;
+    }
+    .check-item {
+      min-height: 52px;
+    }
+    .file-remove {
+      width: 34px;
+      height: 34px;
+    }
+  }
 </style>
 </head>
 <body>
@@ -568,7 +757,7 @@
 const TOTAL_STEPS = 6;
 
 // Cole aqui a URL gerada após publicar o Apps Script como Web App
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzSDOb4a27fxri6PvjzbAbHHsmGcZvUoK9ptKIOZWNGNe_kkjsui6glyZ3PA4AsKKn0Zw/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzWElO2SYOOX1Fc-Vdu8GZ5ZBesKusIYMDVoaNq2sLWYRlFQJF5Qpvol92EzELEnHUOgQ/exec';
 const FORM_TOKEN = 'SVX2024@#leads'; // token secreto validado no servidor
 
 const PRODUCTS = [
@@ -725,7 +914,6 @@ function showStep(n) {
 }
 
 function nextStep() {
-  try {
   if (currentStep === 2) {
     const nameOk  = validateName();
     const emailOk = validateEmail();
@@ -786,7 +974,7 @@ function nextStep() {
       if (data.error) throw new Error(data.error);
       assignedSales = data;
       const safeSalesName = String(data.name).replace(/[<>&"']/g, '');
-      const initials = safeSalesName.split(' ').slice(0,2).map(w => w[0]).join('');
+      const initials = safeSalesName.split(' ').filter(Boolean).slice(0,2).map(w => w[0]).join('');
       document.getElementById('salesAvatar').textContent = initials;
       document.getElementById('salesName').textContent   = safeSalesName;
       const em = document.getElementById('salesEmail');
@@ -811,10 +999,6 @@ function nextStep() {
     currentStep++;
   }
   showStep(currentStep);
-  } catch(e) {
-    console.error('nextStep error:', e);
-    alert('Erro inesperado: ' + e.message);
-  }
 }
 
 function prevStep() {
@@ -937,8 +1121,9 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 function handleUpload(type, input) {
   const file = input.files[0];
   if (!file) return;
-  if (file.type !== 'application/pdf') {
-    alert('Por favor, selecione um arquivo PDF.'); 
+  const isPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
+  if (!isPdf) {
+    alert('Por favor, selecione um arquivo PDF.');
     input.value = ''; return;
   }
   if (file.size > MAX_FILE_SIZE) {
