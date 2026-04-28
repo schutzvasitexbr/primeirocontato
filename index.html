@@ -756,9 +756,8 @@
 <script>
 const TOTAL_STEPS = 6;
 
-// Cole aqui a URL gerada após publicar o Apps Script como Web App
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzWElO2SYOOX1Fc-Vdu8GZ5ZBesKusIYMDVoaNq2sLWYRlFQJF5Qpvol92EzELEnHUOgQ/exec';
-const FORM_TOKEN = 'SVX@2026#kP9mQxL!leads'; // token secreto validado no servidor
+// Requisições passam pelo Cloudflare Worker — o token fica lá, nunca exposto aqui
+const APPS_SCRIPT_URL = 'https://schutz-vasitex-formularioprimeirocontato.schutzvasitex-br.workers.dev';
 
 const PRODUCTS = [
   'IBC (1.000L)',
@@ -951,7 +950,6 @@ function nextStep() {
     .then(([cnpjB64, msdsB64]) => {
       const payload = {
         action:      'submitLead',
-        token:       FORM_TOKEN,
         name:        document.getElementById('inputName').value.trim(),
         email:       document.getElementById('inputEmail').value.trim(),
         phone:       document.getElementById('inputPhone').value.trim(),
